@@ -8,6 +8,10 @@
 # is very well-received !"
 #                             -- Some Sucker
 #
+# "An ocassional swastika, if rainbow-colored or used in relation
+# to Linus Torvalds can't really do any harm."
+#                             -- Silvester Standalone
+#
 # credits:
 #    ben for banner leetness
 #    Pi for the popeye filter
@@ -18,6 +22,7 @@
 #    uke for the inspiration for the checker
 #    hlprmnky for the jigs and for debugging
 #    various stolen things: emacs spook file, jwz's scrambler script
+#    UTF-8 support by lkundrak@v3.sk, with funding from U.S. defense department
 #
 # (this whole thing needs to be rewritten)
 #
@@ -55,6 +60,7 @@ use Encode;
 use Unicode::Normalize;
 use Text::Wrap;
 use IPC::Open3;
+use Encode;
 use vars qw/$VERSION %IRSSI $SPLASH $NAME $CONTEXT $OUTPUT/;
 use vars qw/$BASH_PROMPT $ANSI/;
 
@@ -163,6 +169,7 @@ my $settings = {
 	sine_frequency		=> "0.3",
 	sine_background		=> " ",
 	banner_style		=> "phrase",
+	encoding		=> "UTF-8",
 };
 
 # wrap settings routines.. irssi cares about type
@@ -752,6 +759,9 @@ sub process {
 	my $cowfile = settings_get_str("cowfile");
 	my $figfont = settings_get_str("figfont");
 	my $banstyle = settings_get_str("banner_style");
+	my $encoding = settings_get_str("encoding");
+
+	$text = decode($encoding, $text) if $encoding;
 
 	my $sendto = $dest->{name} if $dest;
 
@@ -3494,6 +3504,7 @@ if ($CONTEXT eq 'terminal') {
 	Irssi::settings_add_int($IRSSI{name}, 'spook_words', $settings->{spook_words});
 	Irssi::settings_add_int($IRSSI{name}, 'hug_size', $settings->{hug_size});
 	Irssi::settings_add_str($IRSSI{name}, 'banner_style', $settings->{banner_style});
+	Irssi::settings_add_str($IRSSI{name}, 'encoding', $settings->{encoding});
 
 	cprint("$SPLASH.  '/$NAME help' for usage");
 }
